@@ -6,22 +6,33 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_LOGIN = 100;
+    private static final String TAG = MainActivity.class.getSimpleName();
     boolean logon = false;
     private RecyclerView recyclerView;
-    String functions[] = null;
+    private List<Function> functions;
+    //    String functions[] = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 //            startActivity(intent);
             startActivityForResult(intent, REQUEST_LOGIN);
         }
+//set imageView TextView
+        setupFunctions();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -47,10 +60,78 @@ public class MainActivity extends AppCompatActivity {
         //Recycler
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 3));
+//                  recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         //Adapter
-        FunctionAdapter adapter = new FunctionAdapter(MainActivity.this);
+//                  FunctionAdapter adapter = new FunctionAdapter(MainActivity.this);
+        IconAdapter adapter = new IconAdapter();
         recyclerView.setAdapter(adapter);
+    }
+
+    private void setupFunctions() {
+        functions = new ArrayList<>();
+        String[] funcs = getResources().getStringArray(R.array.functions);
+        functions.add(new Function(funcs[0], R.drawable.funs_transaction));
+        functions.add(new Function(funcs[1], R.drawable.func_balance));
+        functions.add(new Function(funcs[2], R.drawable.func_finance));
+        functions.add(new Function(funcs[3], R.drawable.func_contacts));
+        functions.add(new Function(funcs[4], R.drawable.func_exit));
+    }
+
+    public class IconAdapter extends RecyclerView.Adapter<IconAdapter.IconHolder> {
+
+        @NonNull
+        @Override
+        public IconHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = getLayoutInflater().inflate(R.layout.item_icon, parent, false);
+            return new IconHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull IconHolder holder, int position) {
+            final Function functionPosition = functions.get(position);
+            holder.nameText.setText(functionPosition.getName());
+            holder.imageView.setImageResource(functionPosition.getIcon());
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClicked(functionPosition);
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return functions.size();
+        }
+
+        public class IconHolder extends RecyclerView.ViewHolder{
+            ImageView imageView;
+            TextView nameText;
+            public IconHolder(@NonNull View itemView) {
+                super(itemView);
+                imageView = itemView.findViewById(R.id.item_icon);
+                nameText = itemView.findViewById(R.id.item_name);
+            }
+        }
+
+    }
+
+    private void itemClicked(Function functionPosition) {
+        Log.d(TAG, "itemClicked:" + functionPosition.getName());
+        switch (functionPosition.getIcon()){
+            case R.drawable.funs_transaction:
+                break;
+            case R.drawable.func_balance:
+                break;
+            case R.drawable.func_finance:
+                break;
+            case R.drawable.func_contacts:
+                break;
+            case R.drawable.func_exit:
+                finish();
+                break;
+        }
     }
 
     @Override

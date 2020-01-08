@@ -3,8 +3,16 @@ package com.example.hawatm;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,14 +29,25 @@ import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
+    private static final int REQUEST_CODE_CAMERA = 5;
     Button btn1, btn2;
     EditText et1, et2;
     CheckBox cbRemember;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-//        myGetSaredPreferences();
+        //dangerous permission
+        int permission = ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.CAMERA);
+        if(permission == PackageManager.PERMISSION_GRANTED){
+            takePhoto();
+        }else{
+            ActivityCompat.requestPermissions(LoginActivity.this,
+                    new String[] {Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA);
+        }
+
+        //        myGetSaredPreferences();
         btn1 = findViewById(R.id.button);
         btn2 = findViewById(R.id.button2);
         et1 = findViewById(R.id.userid);
@@ -90,8 +109,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                      }
                                  });
-//                        if("jack".equals(userid) && "1234".equals(passwd)){
-//                        }
+            //                        if("jack".equals(userid) && "1234".equals(passwd)){}
                         break;
 
                     case R.id.button2:
@@ -101,6 +119,21 @@ public class LoginActivity extends AppCompatActivity {
         };
         btn1.setOnClickListener(OCL);
         btn2.setOnClickListener(OCL);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == REQUEST_CODE_CAMERA){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                takePhoto();
+            }
+        }
+    }
+
+    private void takePhoto() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivity(intent);
     }
 
     private void myGetSaredPreferences() {

@@ -38,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(!logon){
+        //delete!
+        if(logon){
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
 //            startActivity(intent);
             startActivityForResult(intent, REQUEST_LOGIN);
@@ -127,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
             case R.drawable.func_finance:
                 break;
             case R.drawable.func_contacts:
+                Intent intent = new Intent(MainActivity.this, ContactActivity.class);
+                startActivity(intent);
                 break;
             case R.drawable.func_exit:
                 finish();

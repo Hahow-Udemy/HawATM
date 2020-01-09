@@ -49,5 +49,5 @@ public class ContactActivity extends AppCompatActivity {
                 readContacts();
             }
         }
-    }
-}
+    }}
+

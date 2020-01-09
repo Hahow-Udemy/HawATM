@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //delete!
-        if(!logon){
+        if(logon){
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
 //            startActivity(intent);
             startActivityForResult(intent, REQUEST_LOGIN);

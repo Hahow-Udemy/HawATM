@@ -1,14 +1,18 @@
 package com.example.hawatm;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.hawatm.data.Expense;
 import com.example.hawatm.data.ExpenseDatabase;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -22,8 +26,12 @@ public class FinanceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finance);
-        final ExpenseDatabase database =  Room.databaseBuilder(
-                FinanceActivity.this, ExpenseDatabase.class, "expense.db").build();
+        //database 1
+//        final ExpenseDatabase database =  Room.databaseBuilder(
+//                FinanceActivity.this, ExpenseDatabase.class, "expense.db").build();
+
+        //database2
+        final ExpenseDatabase database = ExpenseDatabase.getInstance(FinanceActivity.this);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -45,5 +53,40 @@ public class FinanceActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.action_expense_to_firebase){
+            final String userid = getSharedPreferences("atm", MODE_PRIVATE)
+                    .getString("USERID", null);
+            if(userid != null){
+
+                ExecutorService executorService = Executors.newSingleThreadExecutor();
+                executorService.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Expense> expenses =  ExpenseDatabase.getInstance(FinanceActivity.this)
+                                .expenseDao()
+                                .getAll();
+
+                        FirebaseDatabase.getInstance()
+                                .getReference("users")
+                                .child(userid)
+                                .child("expenses")
+                                .setValue(expenses);
+
+                    }
+                });
+
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_finance, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

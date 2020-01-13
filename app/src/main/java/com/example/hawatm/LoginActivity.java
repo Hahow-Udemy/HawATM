@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -27,6 +28,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
     private static final int REQUEST_CODE_CAMERA = 5;
@@ -39,34 +44,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         //dangerous permission
-        int permission = ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.CAMERA);
-        if(permission == PackageManager.PERMISSION_GRANTED){
-            takePhoto();
-        }else{
-            ActivityCompat.requestPermissions(LoginActivity.this,
-                    new String[] {Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA);
-        }
+        //        camera();
 
         //        myGetSaredPreferences();
-        btn1 = findViewById(R.id.button);
-        btn2 = findViewById(R.id.button2);
-        et1 = findViewById(R.id.userid);
-        et2 = findViewById(R.id.passwd);
-        cbRemember = findViewById(R.id.cb_rem_userid);
-        cbRemember.setChecked(getSharedPreferences("atm",MODE_PRIVATE).getBoolean("REMEMBER_USERID", false));
-        cbRemember.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                getSharedPreferences("atm", MODE_PRIVATE)
-                        .edit()
-                        .putBoolean("REMEMBER_USERID", isChecked)
-                        .apply();
-            }
-        });
+        findViews();
+        new TestTask().execute("http://tw.yahoo.com");
 
-        String userid = getSharedPreferences("atm", MODE_PRIVATE)
-                .getString("USERID", "");
-        et1.setText(userid);
+
 
         View.OnClickListener OCL = new View.OnClickListener() {
             @Override
@@ -119,6 +103,69 @@ public class LoginActivity extends AppCompatActivity {
         };
         btn1.setOnClickListener(OCL);
         btn2.setOnClickListener(OCL);
+    }
+
+    public class TestTask extends AsyncTask<String, Void, Integer>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d(TAG, "onPreExecute:");
+            Toast.makeText(LoginActivity.this, "onPreExecute", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            Log.d(TAG, "onPreExecute:");
+            Toast.makeText(LoginActivity.this, "onPreExecute" + integer, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected Integer doInBackground(String... strings) {
+            int data = 0;
+            try {
+                URL url = new URL(strings[0]);
+                data = url.openStream().read();
+                Log.d(TAG, "TestTask:" + data);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return data;
+        }
+    }
+
+    private void findViews() {
+        btn1 = findViewById(R.id.button);
+        btn2 = findViewById(R.id.button2);
+        et1 = findViewById(R.id.userid);
+        et2 = findViewById(R.id.passwd);
+        cbRemember = findViewById(R.id.cb_rem_userid);
+        cbRemember.setChecked(getSharedPreferences("atm",MODE_PRIVATE).getBoolean("REMEMBER_USERID", false));
+        cbRemember.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                getSharedPreferences("atm", MODE_PRIVATE)
+                        .edit()
+                        .putBoolean("REMEMBER_USERID", isChecked)
+                        .apply();
+            }
+        });
+
+        String userid = getSharedPreferences("atm", MODE_PRIVATE)
+                .getString("USERID", "");
+        et1.setText(userid);
+    }
+
+    private void camera() {
+        int permission = ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.CAMERA);
+        if(permission == PackageManager.PERMISSION_GRANTED){
+            takePhoto();
+        }else{
+            ActivityCompat.requestPermissions(LoginActivity.this,
+                    new String[] {Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA);
+        }
     }
 
     @Override

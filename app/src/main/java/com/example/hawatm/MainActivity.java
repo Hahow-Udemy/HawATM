@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             startActivityForResult(intent, REQUEST_LOGIN);
         }
-//set imageView TextView
+        //set imageView TextView
         setupFunctions();
 
         Toolbar toolbar = findViewById(R.id.toolbar);

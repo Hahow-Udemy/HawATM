@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         //delete!
         if(!logon){
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-//            startActivity(intent);
+            startActivity(intent);
             startActivityForResult(intent, REQUEST_LOGIN);
         }
 //set imageView TextView
@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "itemClicked:" + functionPosition.getName());
         switch (functionPosition.getIcon()){
             case R.drawable.funs_transaction:
+                startActivity(new Intent(MainActivity.this, TransActivity.class));
                 break;
             case R.drawable.func_balance:
                 break;

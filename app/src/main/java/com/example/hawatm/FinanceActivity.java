@@ -36,7 +36,7 @@ public class FinanceActivity extends AppCompatActivity {
             @Override
             public void run() {
                 database.expenseDao().insert(new Expense("2020-01-03", "breakfirst", 50));
-//                database.expenseDao().insert(new Expense("2020-01-07", "parking", 75));
+                database.expenseDao().insert(new Expense("2020-01-07", "parking", 75));
             }
         }).start();
 

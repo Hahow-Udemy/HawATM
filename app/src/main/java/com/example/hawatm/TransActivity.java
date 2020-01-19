@@ -1,12 +1,21 @@
 package com.example.hawatm;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +23,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -24,11 +35,16 @@ import okhttp3.Response;
 public class TransActivity extends AppCompatActivity {
 
     private static final String TAG = TransActivity.class.getSimpleName();
+    private List<Transaction> transactions;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trans);
+        recyclerView = findViewById(R.id.recycler);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(TransActivity.this));
 //        new TransTask().execute("https://atm201605.appspot.com/h");
         OkHttpClient client = new OkHttpClient();
         final Request request = new Request.Builder()
@@ -42,9 +58,69 @@ public class TransActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                Log.d(TAG, "onResponse:" + response.body().string());
+                final String json = response.body().string();
+                Log.d(TAG, "onResponse:" + json);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        parseJSON(json);
+                    }
+                });
             }
         });
+    }
+
+    public class TransAdapter extends RecyclerView.Adapter<TransAdapter.TransHolder>{
+        @NonNull
+        @Override
+        public TransHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = getLayoutInflater().inflate(R.layout.item_transaction, parent, false);
+            return new TransHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull TransHolder holder, int position) {
+            Transaction tran = transactions.get(position);
+            holder.bindTo(tran);
+        }
+
+        @Override
+        public int getItemCount() {
+            return transactions.size();
+        }
+
+        public class TransHolder extends RecyclerView.ViewHolder{
+            TextView dateText, amountText, typeText;
+            public TransHolder(@NonNull View itemView) {
+                super(itemView);
+                dateText = itemView.findViewById(R.id.item_date);
+                amountText = itemView.findViewById(R.id.item_amount);
+                typeText = itemView.findViewById(R.id.item_type);
+            }
+
+            public void bindTo(Transaction tran) {
+                dateText.setText(tran.date);
+                amountText.setText(String.valueOf(tran.amount));
+                typeText.setText(String.valueOf(tran.type));
+            }
+        }
+    }
+
+    private void parseJSON(String json) {
+        transactions = new ArrayList<Transaction>();
+
+        try {
+            JSONArray array = new JSONArray(json);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                Transaction tran = new Transaction(object);
+                transactions.add(tran);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        TransAdapter adapter = new TransAdapter();
+        recyclerView.setAdapter(adapter);
     }
 
     public class TransTask extends AsyncTask<String, Void ,String>{

@@ -1,10 +1,5 @@
 package com.example.hawatm;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -45,7 +42,7 @@ public class TransActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trans);
-        recyclerView = findViewById(R.id.recycler);
+        recyclerView = findViewById(R.id.recycler_trans);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(TransActivity.this));
 //        new TransTask().execute("https://atm201605.appspot.com/h");
@@ -66,21 +63,21 @@ public class TransActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        parseJSON(json);
-                        parseGSON(json);
+                        parseJSON(json);
+//                        parseGSON(json);
                     }
                 });
             }
         });
     }
 
-    private void parseGSON(String json) {
-        Gson gson = new Gson();
-        transactions = gson.fromJson(json,
-                new TypeToken<ArrayList<Transaction>>(){}.getType());
-        TransAdapter adapter = new TransAdapter();
-        recyclerView.setAdapter(adapter);
-    }
+//    private void parseGSON(String json) {
+//        Gson gson = new Gson();
+//        transactions = gson.fromJson(json,
+//                new TypeToken<ArrayList<Transaction>>(){}.getType());
+//        TransAdapter adapter = new TransAdapter();
+//        recyclerView.setAdapter(adapter);
+//    }
 
     public class TransAdapter extends RecyclerView.Adapter<TransAdapter.TransHolder>{
         @NonNull

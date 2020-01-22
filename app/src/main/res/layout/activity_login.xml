@@ -8,15 +8,16 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="258dp"
-        android:layout_height="202dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="48dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/login_icon" />
+        app:srcCompat="@drawable/login_icon"
+        tools:visibility="gone" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -95,5 +96,16 @@
         android:text="記住帳號"
         app:layout_constraintStart_toEndOf="@+id/userid"
         app:layout_constraintTop_toTopOf="@+id/userid" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_news"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

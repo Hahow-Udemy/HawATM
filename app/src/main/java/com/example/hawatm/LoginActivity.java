@@ -31,7 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
     private static final int REQUEST_CODE_CAMERA = 5;
-    Button btn1, btn2;
+    Button btn1, btn2, btn3;
     EditText et1, et2;
     CheckBox cbRemember;
     private Intent helloService;
@@ -60,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         //        myGetSaredPreferences();
         btn1 = findViewById(R.id.button);
         btn2 = findViewById(R.id.button2);
+        btn3 = findViewById(R.id.button3);
         et1 = findViewById(R.id.userid);
         et2 = findViewById(R.id.passwd);
         cbRemember = findViewById(R.id.cb_rem_userid);
@@ -124,11 +125,15 @@ public class LoginActivity extends AppCompatActivity {
 
                     case R.id.button2:
                         break;
+                    case R.id.button3:
+                        startActivity(new Intent(LoginActivity.this, MapsActivity.class));
+                        break;
                 }
             }
         };
         btn1.setOnClickListener(OCL);
         btn2.setOnClickListener(OCL);
+        btn3.setOnClickListener(OCL);
     }
     BroadcastReceiver register = new BroadcastReceiver() {
         @Override
@@ -142,6 +147,9 @@ public class LoginActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(HelloService.ACTION_HELLO_DONE);
         registerReceiver(register, filter);
     }
+//    public void map(View view){
+//        startActivity(new Intent(LoginActivity.this, MapsActivity.class));
+//    }
 
     @Override
     protected void onStop() {

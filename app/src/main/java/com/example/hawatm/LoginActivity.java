@@ -1,7 +1,10 @@
 package com.example.hawatm;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     Button btn1, btn2;
     EditText et1, et2;
     CheckBox cbRemember;
+    private Intent helloService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,14 @@ public class LoginActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = manager.beginTransaction();
         fragmentTransaction.add(R.id.container_news, NewsFragment.getInstance());
         fragmentTransaction.commit();
+        //Service
+        helloService = new Intent(LoginActivity.this, HelloService.class);
+        helloService.putExtra("NAME", "T1");
+        startService(helloService);
+        helloService.putExtra("NAME", "T2");
+        startService(helloService);
+        helloService.putExtra("NAME", "T3");
+        startService(helloService);
 
         //dangerous permission
         //        camera();
@@ -117,6 +129,25 @@ public class LoginActivity extends AppCompatActivity {
         };
         btn1.setOnClickListener(OCL);
         btn2.setOnClickListener(OCL);
+    }
+    BroadcastReceiver register = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "onReceive: Hello:" + intent.getAction());
+        }
+    };
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter(HelloService.ACTION_HELLO_DONE);
+        registerReceiver(register, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopService(helloService);
+        unregisterReceiver(register);
     }
 
     private void camera() {
